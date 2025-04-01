@@ -1,0 +1,81 @@
+# Data Processing Configuration for Flood Warning System
+
+# Define the geographical region of interest
+region:
+  name: "Colorado River Basin"
+  description: "River basin in central Texas prone to flash flooding"
+  lat_min: 30.0
+  lat_max: 31.0
+  lon_min: -98.0
+  lon_max: -97.0
+
+# Define the time period for historical data
+time_period:
+  # Training data period
+  start_date: "2022-05-01"
+  end_date: "2022-05-15"
+  # Validation data period (for testing the model)
+  validation_start_date: "2022-05-16" 
+  validation_end_date: "2022-05-20"
+
+# Configuration for different data sources
+data_sources:
+  # Satellite imagery for flood extent mapping
+  satellite:
+    use: true
+    source: "sentinel"  # Options: sentinel, landsat, modis
+    bands: ["B2", "B3", "B4", "B8"]  # RGB + NIR
+    cloud_cover_threshold: 20  # Maximum cloud cover percentage
+    
+  # River gauge measurements
+  river_gauge:
+    use: true
+    source: "usgs"  # Options: usgs, ec (Environment Canada), bom (Australia)
+    variables: ["discharge", "stage"]
+    min_data_completeness: 90  # Minimum percentage of valid data points
+    
+  # Precipitation data
+  precipitation:
+    use: true
+    source: "gpcp"  # Options: gpcp, trmm, imerg, era5
+    temporal_resolution: "daily"  # Options: hourly, daily
+    spatial_resolution: 0.1  # Degrees
+    
+  # Digital Elevation Model
+  dem:
+    use: true
+    source: "srtm"  # Options: srtm, aster, national (country-specific)
+    resolution: 30  # Meters
+    derive_products: ["slope", "aspect", "flow_accumulation", "twi"]
+
+# Processing parameters
+processing:
+  # Resampling and grid alignment
+  target_grid:
+    spatial_resolution: 100  # Meters
+    temporal_resolution: "hourly"
+    projection: "EPSG:4326"  # WGS84
+    
+  # Gap filling and interpolation
+  interpolation:
+    method: "linear"  # Options: linear, nearest, cubic
+    max_gap_to_fill: 24  # Maximum gap to interpolate (in hours)
+    
+  # Feature engineering
+  features:
+    calculate_anomalies: true
+    rolling_windows: [24, 48, 72]  # Hours
+    include_calendar_features: true  # Day of year, month, etc.
+    
+  # Data quality filters
+  quality:
+    remove_outliers: true
+    zscore_threshold: 3.0
+    smooth_noisy_data: true
+
+# Output settings
+output:
+  format: "netcdf"  # Options: netcdf, zarr, csv, geotiff
+  compress: true
+  chunk_size: 100  # MB
+  save_intermediates: true 

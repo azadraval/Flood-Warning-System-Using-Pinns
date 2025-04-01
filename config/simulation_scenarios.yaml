@@ -1,0 +1,138 @@
+# ANUGA Simulation Scenarios
+# This file defines multiple flood scenarios for hydrodynamic simulations
+
+# River Flooding Scenarios
+- name: river_flood_moderate
+  type: river_flooding
+  description: "Moderate river flooding with gradual rise and fall"
+  domain:
+    x_size: 2000
+    y_size: 2000
+    resolution: 10
+    mesh_resolution: 20.0
+  parameters:
+    base_level: 22.0
+    peak_height: 2.0
+    peak_time: 12.0
+    rising_duration: 6.0
+    falling_rate: 0.15
+  duration: 24.0
+  output_timestep: 15  # minutes
+
+- name: river_flood_extreme
+  type: river_flooding
+  description: "Extreme river flooding with rapid rise and prolonged peak"
+  domain:
+    x_size: 2000
+    y_size: 2000
+    resolution: 10
+    mesh_resolution: 20.0
+  parameters:
+    base_level: 22.0
+    peak_height: 4.0
+    peak_time: 15.0
+    rising_duration: 4.0
+    falling_rate: 0.1
+  duration: 36.0
+  output_timestep: 15  # minutes
+
+- name: river_flood_flashy
+  type: river_flooding
+  description: "Flash flood with rapid rise and fall"
+  domain:
+    x_size: 2000
+    y_size: 2000
+    resolution: 10
+    mesh_resolution: 15.0
+  parameters:
+    base_level: 22.0
+    peak_height: 3.0
+    peak_time: 8.0
+    rising_duration: 2.0
+    falling_rate: 0.25
+  duration: 18.0
+  output_timestep: 10  # minutes
+
+# Urban Flooding Scenarios
+- name: urban_flood_moderate
+  type: urban_flooding
+  description: "Moderate urban flooding from sustained rainfall"
+  domain:
+    x_size: 1000
+    y_size: 1000
+    resolution: 5
+    mesh_resolution: 10.0
+  parameters:
+    rain_start: 2.0
+    rain_duration: 6.0
+    rain_intensity: 30.0  # mm/hr
+  duration: 12.0
+  output_timestep: 10  # minutes
+
+- name: urban_flood_extreme
+  type: urban_flooding
+  description: "Extreme urban flooding from intense rainfall"
+  domain:
+    x_size: 1000
+    y_size: 1000
+    resolution: 5
+    mesh_resolution: 10.0
+  parameters:
+    rain_start: 1.0
+    rain_duration: 4.0
+    rain_intensity: 75.0  # mm/hr
+  duration: 12.0
+  output_timestep: 10  # minutes
+
+# Coastal Surge Scenarios
+- name: coastal_surge_moderate
+  type: coastal_surge
+  description: "Moderate coastal storm surge"
+  domain:
+    x_size: 3000
+    y_size: 1500
+    resolution: 15
+    mesh_resolution: 30.0
+  parameters:
+    base_level: 0.0
+    surge_height: 2.0
+    surge_rise_time: 8.0
+    surge_duration: 4.0
+    surge_fall_rate: 0.2
+  duration: 24.0
+  output_timestep: 15  # minutes
+
+- name: coastal_surge_hurricane
+  type: coastal_surge
+  description: "Major hurricane-induced coastal surge"
+  domain:
+    x_size: 3000
+    y_size: 1500
+    resolution: 15
+    mesh_resolution: 30.0
+  parameters:
+    base_level: 0.0
+    surge_height: 5.0
+    surge_rise_time: 6.0
+    surge_duration: 8.0
+    surge_fall_rate: 0.15
+  duration: 36.0
+  output_timestep: 15  # minutes
+
+# Dam Break Scenario
+- name: dam_break_scenario
+  type: dam_break
+  description: "Catastrophic dam break flooding"
+  domain:
+    x_size: 2000
+    y_size: 1000
+    resolution: 10
+    mesh_resolution: 15.0
+  parameters:
+    breach_time: 2.0
+    water_level: 10.0
+    polygons:
+      - coords: [[200, 100], [200, 900], [400, 900], [400, 100]]
+        stage: 10.0
+  duration: 12.0
+  output_timestep: 5  # minutes 

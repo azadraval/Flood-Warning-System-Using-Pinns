@@ -1,0 +1,56 @@
+# Flood Prediction Problem Definition
+
+# Flood Scenario Configuration
+scenario:
+  type: "river_flooding"  # Options: "urban_flooding", "river_flooding", "coastal_surge"
+  description: "River flooding in a semi-urban area with potential for flash floods"
+  
+  # Geographical scope
+  region:
+    name: "Example River Basin"
+    boundaries:
+      lat_min: 30.0  # To be replaced with actual coordinates
+      lat_max: 31.0
+      lon_min: -97.0
+      lon_max: -96.0
+    
+  # Time parameters
+  time:
+    prediction_horizon_hours: 24  # How far ahead to predict
+    time_step_minutes: 30        # Resolution of predictions
+    historical_data_days: 7      # How much past data to consider
+
+# Hydrodynamic Variables
+variables:
+  # Primary prediction targets
+  targets:
+    - name: "water_depth"
+      unit: "meters"
+      description: "Water depth above ground level"
+    - name: "flow_velocity"
+      unit: "m/s"
+      description: "Flow velocity magnitude"
+  
+  # Input features
+  inputs:
+    - name: "rainfall_intensity"
+      unit: "mm/hr"
+      description: "Precipitation rate"
+    - name: "topography"
+      unit: "meters"
+      description: "Digital elevation model (DEM)"
+    - name: "soil_moisture"
+      unit: "percent"
+      description: "Antecedent soil moisture condition"
+    - name: "river_discharge"
+      unit: "m³/s"
+      description: "Upstream river discharge measurements"
+
+# Physics constraints
+physics_constraints:
+  - name: "mass_conservation"
+    description: "Conservation of water mass in the system"
+    equations: "∂h/∂t + ∇·(hv) = R"  # h: water depth, v: velocity, R: rainfall
+  - name: "momentum_conservation"
+    description: "Conservation of momentum (simplified shallow water equations)"
+    equations: "∂(hv)/∂t + ∇·(hv⊗v) = -gh∇z"  # g: gravity, z: topography 

@@ -1,0 +1,52 @@
+# Base configuration for ANUGA flood simulations
+# This serves as a template for generating multiple simulation scenarios
+
+# Flood scenario definition
+flood_scenario:
+  type: "river_flooding"  # Options: river_flooding, urban_flooding, coastal_surge
+  description: "River flooding simulation for a typical valley with upstream inflow"
+  region_name: "Test River Valley"
+
+# Domain configuration
+domain:
+  x_size: 1000.0  # Domain size in x-direction (m)
+  y_size: 400.0   # Domain size in y-direction (m)
+  resolution: 10.0  # Grid resolution (m)
+
+# Boundary conditions
+boundary_conditions:
+  upstream:
+    type: "flow"
+    depth: 3.0  # Water depth at upstream boundary (m)
+    velocity: 2.5  # Flow velocity at upstream boundary (m/s)
+  downstream:
+    type: "stage"
+    value: 1.5  # Water stage at downstream boundary (m)
+  rainfall:
+    rate: 10.0  # Rainfall rate (mm/hr)
+
+# Friction parameters
+friction:
+  manning_n: 0.035  # Manning's roughness coefficient
+
+# Simulation parameters
+simulation:
+  duration: 3600.0  # Simulation duration (seconds)
+  output_interval: 60.0  # Output interval (seconds)
+
+# Visualization settings
+visualization:
+  colormap: "Blues"
+  contour_levels: 10
+  save_animation: true
+
+# Output settings
+output:
+  format: "netcdf"
+  compression: true
+  quantities:
+    - "stage"
+    - "depth"
+    - "velocity"
+    - "momentum"
+    - "elevation" 

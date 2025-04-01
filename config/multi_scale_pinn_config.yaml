@@ -1,0 +1,84 @@
+# Configuration for Multi-scale Physics-Informed Neural Network (PINN)
+# for flood modeling, optimized for NVIDIA 1650 Max-Q (4GB VRAM)
+
+# Data parameters
+data:
+  sequence_length: 8         # Reduced from 10 to save memory
+  predict_steps: 1           # Number of time steps to predict
+  batch_size: 8              # Reduced batch size for limited VRAM
+  val_split: 0.2             # Fraction of data to use for validation
+  num_workers: 2             # Reduced workers to prevent memory issues
+  normalize: true            # Whether to normalize the data
+
+# Model parameters
+model:
+  hidden_channels: 48        # Reduced from 64 to save memory
+  fno_modes: [8, 8]          # Reduced from [12, 12] to save memory
+  num_scales: 2              # Reduced from 3 to save memory
+  use_gnn: true              # Keep GNN for accuracy but can be disabled if memory issues occur
+  dx: 10.0                   # Grid spacing in x direction (meters)
+  dy: 10.0                   # Grid spacing in y direction (meters)
+  dt: 1.0                    # Time step size (seconds)
+  gravity: 9.81              # Gravitational acceleration constant
+  manning_coef: 0.035        # Manning's roughness coefficient
+  physics_weight: 0.1        # Weight of physics loss in the total loss
+  dropout: 0.2               # Increased dropout for regularization and memory efficiency
+  use_batch_norm: true       # Keep batch normalization for stability
+
+# Physics-informed loss parameters
+physics:
+  # Adaptive weighting parameters
+  initial_weight: 0.1         # Initial weight for physics loss
+  adaptive_weighting: true    # Whether to use adaptive weighting
+  min_weight: 0.01            # Minimum weight for physics loss
+  max_weight: 1.0             # Maximum weight for physics loss
+  adaptation_rate: 0.05       # Rate at which to adapt physics weight
+  
+  # Equation weights
+  continuity_weight: 1.0      # Weight for continuity equation
+  x_momentum_weight: 0.5      # Weight for x-momentum equation
+  y_momentum_weight: 0.5      # Weight for y-momentum equation
+  conservation_weight: 1.0    # Weight for mass conservation equation
+  momentum_weight: 1.0        # Weight for momentum equations
+  boundary_weight: 0.5        # Weight for boundary conditions
+  enforce_positivity: true    # Whether to enforce positive water depth
+
+# Training parameters
+training:
+  num_epochs: 100             # Number of training epochs
+  save_interval: 10           # Interval for saving model checkpoints
+  early_stopping_patience: 15 # Number of epochs to wait before early stopping
+  gradient_clip_val: 1.0      # Value to clip gradients to
+  mixed_precision: true       # Enable mixed precision for memory efficiency
+  gradient_accumulation_steps: 4  # Increased to compensate for smaller batch size
+
+# Optimizer parameters
+optimizer:
+  type: "adamw"               # AdamW is more memory efficient than LAMB
+  learning_rate: 0.001        # Learning rate
+  weight_decay: 1e-5          # Weight decay for regularization
+  betas: [0.9, 0.999]         # Beta parameters for Adam-based optimizers
+  eps: 1e-8                   # Epsilon parameter for numerical stability
+  momentum: 0.9               # Momentum (for SGD)
+  nesterov: true              # Whether to use Nesterov momentum (for SGD)
+
+# Scheduler parameters
+scheduler:
+  use_scheduler: true         # Whether to use a learning rate scheduler
+  type: "onecycle"            # OneCycle is efficient for limited training time
+  patience: 10                # Number of epochs to wait before reducing learning rate (for plateau)
+  factor: 0.5                 # Factor by which to reduce learning rate (for step, plateau)
+  min_lr: 1e-6                # Minimum learning rate
+  step_size: 30               # Step size (for step scheduler)
+  t_max: 100                  # T_max parameter (for cosine scheduler)
+  max_lr: 0.01                # Maximum learning rate (for onecycle)
+  pct_start: 0.3              # Percentage of training to increase LR (for onecycle)
+  div_factor: 25.0            # Initial learning rate division factor (for onecycle)
+  final_div_factor: 10000.0   # Final learning rate division factor (for onecycle)
+
+# Visualization parameters
+visualization:
+  plot_interval: 20           # Reduced from 10 to save computational resources
+  sample_idx: [0, 5, 10]      # Indices of samples to visualize
+  save_animations: false      # Disabled to save memory and computation
+  plot_components: true       # Whether to plot individual components (h, u, v) 
